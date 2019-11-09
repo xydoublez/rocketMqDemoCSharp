@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace rocketMqDemo
@@ -24,7 +25,10 @@ namespace rocketMqDemo
         {
             try
             {
-                testConsumer();
+                Thread t = new Thread(testConsumer);
+                t.Start();
+                
+                
             }catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
@@ -51,9 +55,8 @@ namespace rocketMqDemo
 
                 foreach (var item in ms.ToList())
                 {
-                    log(string.Format($"消息：主键【{item.Keys}】，产生时间【{item.BornTimestamp.ToDateTime()}】，内容【{item.Body.ToStr()}】"));
+                    log(string.Format($"消息：主键【{item.Keys}】，产生时间【{item.BornTimestamp.ToDateTime()}】，")+ "内容【"+ item.Body.ToStr()+"】");
                 }
-
                 return true;
             };
 
@@ -67,10 +70,10 @@ namespace rocketMqDemo
 
                 Topic = txtTopic.Text,
                 NameServerAddress = txtIP.Text,
-                Group = txtGroup.Text
+                Group = txtGroup.Text,
                 Log = XTrace.Log,
             };
-            // 105命令的数字签名是 NyRea4g3OHmd7RxEUoVJUz58lXc=
+            
 
             mq.Start();
 
@@ -85,7 +88,7 @@ namespace rocketMqDemo
         private void log(string msg)
         {
             this.Invoke(new Action(() => {
-                this.richTextBox1.AppendText(string.Format("时间:{0}\\r\\n内容:{1}\\r\\n", 
+                this.richTextBox1.AppendText(string.Format("时间:{0}\r\n内容:{1}\r\n", 
                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), msg));
             }));
         }
@@ -100,7 +103,8 @@ namespace rocketMqDemo
         {
             try
             {
-                testProduct();
+                Thread t = new Thread(testProduct);
+                t.Start();
             }catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);

@@ -58,7 +58,7 @@
             this.txtIP.Name = "txtIP";
             this.txtIP.Size = new System.Drawing.Size(166, 21);
             this.txtIP.TabIndex = 1;
-            this.txtIP.Text = "10.68.5.196:9876";
+            this.txtIP.Text = "192.168.253.152:9876";
             // 
             // txtTopic
             // 
