@@ -36,54 +36,66 @@ namespace rocketMqDemo
         }
         private void testConsumer()
         {
-            var consumer = new Consumer
+            try
             {
-                
-
-                Topic = txtTopic.Text,
-                Group = txtGroup.Text,
-                NameServerAddress = txtIP.Text,
-
-                FromLastOffset = false,
-                BatchSize = 20,
-                Log = XTrace.Log,
-            };
-
-            consumer.OnConsume = (q, ms) =>
-            {
-                log(string.Format("[{0}@{1}]收到消息[{2}]", q.BrokerName, q.QueueId, ms.Length));
-
-                foreach (var item in ms.ToList())
+                var consumer = new Consumer
                 {
-                    log(string.Format($"消息：主键【{item.Keys}】，产生时间【{item.BornTimestamp.ToDateTime()}】，")+ "内容【"+ item.Body.ToStr()+"】");
-                }
-                return true;
-            };
 
-            consumer.Start();
+
+                    Topic = txtTopic.Text,
+                    Group = txtGroup.Text,
+                    NameServerAddress = txtIP.Text,
+
+                    FromLastOffset = false,
+                    BatchSize = 20,
+                    Log = XTrace.Log,
+                };
+
+                consumer.OnConsume = (q, ms) =>
+                {
+                    log(string.Format("[{0}@{1}]收到消息[{2}]", q.BrokerName, q.QueueId, ms.Length));
+
+                    foreach (var item in ms.ToList())
+                    {
+                        log(string.Format($"消息：主键【{item.Keys}】，产生时间【{item.BornTimestamp.ToDateTime()}】，") + "内容【" + item.Body.ToStr() + "】");
+                    }
+                    return true;
+                };
+
+                consumer.Start();
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         private void testProduct()
         {
-            var mq = new Producer
+            try
             {
-              
+                var mq = new Producer
+                {
 
-                Topic = txtTopic.Text,
-                NameServerAddress = txtIP.Text,
-                Group = txtGroup.Text,
-                Log = XTrace.Log,
-            };
-            
 
-            mq.Start();
+                    Topic = txtTopic.Text,
+                    NameServerAddress = txtIP.Text,
+                    Group = txtGroup.Text,
+                    Log = XTrace.Log,
+                };
 
-           
-            var msg = new Msg();
-            msg.id = 1234;
-            msg.type = "order";
-            msg.content = txtMsg.Text;
-            mq.Publish(JsonHelper.ToJson(msg), "TagA");
-            mq.Dispose();
+
+                mq.Start();
+
+
+                var msg = new Msg();
+                msg.id = 1234;
+                msg.type = "order";
+                msg.content = txtMsg.Text;
+                mq.Publish(txtMsg.Text, "tag1");
+                mq.Dispose();
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         private void log(string msg)
         {
